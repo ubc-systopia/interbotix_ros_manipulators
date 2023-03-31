@@ -143,6 +143,14 @@ def move_object(start_positions, end_positions, object):
         vial.set_location(end_positions)
 
 
+def pick_up_object(positions):
+    pass
+
+
+def place_object(positions):
+    pass
+
+
 def disconnect_devices(hp, robot):
     if hp:
         hotplate.disconnect()
@@ -205,6 +213,7 @@ if __name__ == '__main__':
         'robot': True
     }
 
+    # TODO: initialize everything in main
     initialize_devices(ts=devices['ts'], hp=devices['hp'], dosing=devices['dosing'], soln=devices['soln'], robot=devices['robot'])
 
     # Rule 1
@@ -217,8 +226,28 @@ if __name__ == '__main__':
     dosing_device.set_door("state", "closed")
     # Fail (closing door on top of ViperX)
 
+    # TODO: Rule 3
+    viperx.arm.set_ee_pose_components()
+    # Fail (collision with dosing device)
+
+    # Rule 4
+    viperx.arm.
+
     # Rule 5
-    
+    move_object(grid_nw, grid_ne, "vial")
+    viperx.arm.go_to_home_pose()
+    start_heating_soln(50, 2)
+    # Fail (heating an empty vial)
+
+    # Rule 7
+    dosing_device.set_door("state", "open")
+    move_object(grid_nw, grid_sw, "vial")
+    viperx.arm.go_to_home_pose()
+    dosing_device.set_door("state", "closed")
+    dosing_device.run_action(delay=3, quantity=vial.get_volume)
+    dosing_device.stop_action(delay=0)
+    dosing_device.run_action(delay=3, quantity=5)
+    # Fail (attempting to dose an already full vial)
 
     # Rule 8
     dosing_device.set_door("state", "open")

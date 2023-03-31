@@ -1,0 +1,26 @@
+{
+    "grid": {
+        "min_x": 0.52, 
+        "min_y": 0.0034, 
+        "min_z": 0.0135, 
+        "max_x": 0.61, 
+        "max_y": 0.228, 
+        "max_z": 0.10
+    },
+    "dosing_device": {
+        "min_x": 0.06, 
+        "min_y": 0.43, 
+        "min_z": 0.0135, 
+        "max_x": 0.27, 
+        "max_y": 0.51, 
+        "max_z": 0.29
+    },
+    "thermoshaker": {
+        "min_x": 0.436, 
+        "min_y": -0.32, 
+        "min_z": 0.0135, 
+        "max_x": 0.549, 
+        "max_y": -0.23, 
+        "max_z": 0.081
+    }
+}
