@@ -1,0 +1,241 @@
+{
+    "robots": {
+        "viperx": {
+            "properties" : {
+                "class_name" : "InterbotixRobotXSCore"
+            },
+            "status": {
+                "get_location": {
+                    "command": "robot_get_cartesian_position",
+                    "response": null
+                },
+                "get_gripper": {
+                    "command": null,
+                    "response": null
+                }
+            },
+            "actions": {
+                "move_robot": {
+                    "command": "robot_write_commands",
+                    "arguments": null
+                },
+                "pick_object": {
+                    "command": null,
+                    "arguments": null
+                },
+                "place_object": {
+                    "command": null,
+                    "arguments": null
+                }
+            }
+        }
+    },
+    "dosing_systems": {
+        "dosing_device": {
+            "properties": {
+                "class_name" : "SimulatedSmartDevice",
+                "location": "0.4 < x < 0.5 and 0.8 < y < 0.9 and 0.8 < z < 1.0",
+                "hasDoor": true,
+                "doorDimensions": "N"
+            },
+            "status": {
+                "get_door_status": {
+                    "command": "get_door_state",
+                    "response": "open"
+                },
+                "get_dispense_status": {
+                    "command": "get_action",
+                    "response": true
+                },
+                "get_pump_status": {
+                    "command": null,
+                    "response": null
+                }
+            },
+            "actions": {
+                "open_door": {
+                    "command": "set_door",
+                    "arguments": "val == 'open'"
+                },
+                "close_door": {
+                    "command": "set_door",
+                    "arguments": "val == 'closed'"
+                },
+                "start_dispensing": {
+                    "command": "run_action",
+                    "arguments": null
+                },
+                "stop_dispensing": {
+                    "command": "stop_action",
+                    "arguments": null
+                },
+                "start_pumping": {
+                    "command": null,
+                    "arguments": null
+                },
+                "stop_pumping": {
+                    "command": null,
+                    "arguments": null
+                },
+                "dosing_amount" : {
+                    "command": "run_action",
+                    "arguments": "quantity"
+                },
+                "pumping_amount" : {
+                    "command": null,
+                    "arguments": null
+                }
+            }
+        }
+    },
+    "action_devices": {
+        "thermoshaker": {
+            "properties": {
+                "class_name" : "DummyThermoshaker",
+                "location":  "0.3 < x < 0.4 and 0.8 < y < 1.0 and 0.8 < z < 1.0",
+                "hasDoor": false,
+                "doorDimensions": null
+            },
+            "status": {
+                "get_action": {
+                    "command": null,
+                    "response": null
+                },
+                "get_door_status": {
+                    "command": null,
+                    "response": null
+                }
+            },
+            "actions": {
+                "open_door": {
+                    "command": null,
+                    "arguments": null
+                },
+                "close_door": {
+                    "command": null,
+                    "arguments": null
+                },
+                "start": {
+                    "command": "start_shaking",
+                    "arguments": null
+                },
+                "stop": {
+                    "command": "stop_shaking",
+                    "arguments": null
+                }
+            }
+        }
+    },
+    "containers": {
+        "solution": {
+            "vial": {
+                "properties": {
+                    "class_name" : "Vial",
+                    "hasStopper": false,
+                    "maxCapacity": 10
+                },
+                "status": {
+                    "get_stopper_status": {
+                        "command": null,
+                        "response": null
+                    },
+                    "get_container_capacity": {
+                        "command": null,
+                        "response": null
+                    },
+                    "get_container_location": {
+                        "command": "get_location",
+                        "response": null
+                    }
+                },
+                "actions": {
+                    "move_container":{
+                        "command": null,
+                        "arguments": null
+                    },
+                    "remove_stopper": {
+                        "command": null,
+                        "arguments": null
+                    },
+                    "put_stopper": {
+                        "command": null,
+                        "arguments": null
+                    }
+                }
+            }
+        },
+        "storage": {
+            "dosing_device_storage": {
+                "properties": {
+                    "class_name" : "SimulatedSmartDevice",
+                    "dosingSystemName" : "dosing_device",
+                    "hasStopper": false,
+                    "maxCapacity": 10
+                },
+                "status": {
+                    "get_stopper_status": {
+                        "command": null,
+                        "response": null
+                    },
+                    "get_container_capacity": {
+                        "command": null,
+                        "response": null
+                    }
+                },
+                "actions": {
+                    "remove_stopper": {
+                        "command": null,
+                        "arguments": null
+                    },
+                    "put_stopper": {
+                        "command": null,
+                        "arguments": null
+                    }
+                }
+            }
+        },
+        "carrier": {
+            "EnterInstanceNameHere": {
+                "properties": {
+                    "class_name" : "EnterClassNameHere",
+                    "dosingSystemName" : "EnterAssociatedDosingInstanceName",
+                    "hasStopperIn": "EnterBooleanValueHere",
+                    "hasStopperOut": "EnterBooleanValueHere",
+                    "maxCapacity": "EnterMaximumCapacity"
+                },
+                "status": {
+                    "get_stopper_in_status": {
+                        "command": "EnterCommandHere",
+                        "response": "EnterResponseHere"
+                    },
+                    "get_stopper_out_status": {
+                        "command": "EnterCommandHere",
+                        "response": "EnterResponseHere"
+                    },
+                    "get_container_capacity": {
+                        "command": "EnterCommandHere",
+                        "response": "EnterResponseHere"
+                    }
+                },
+                "actions": {
+                    "remove_stopper_in": {
+                        "command": "EnterCommandHere",
+                        "arguments": "EnterArgumentsHere"
+                    },
+                    "put_stopper_in": {
+                        "command": "EnterCommandHere",
+                        "arguments": "EnterArgumentsHere"
+                    },
+                    "remove_stopper_out": {
+                        "command": "EnterCommandHere",
+                        "arguments": "EnterArgumentsHere"
+                    },
+                    "put_stopper_out": {
+                        "command": "EnterCommandHere",
+                        "arguments": "EnterArgumentsHere"
+                    }
+                }
+            }
+        }
+    }
+}
