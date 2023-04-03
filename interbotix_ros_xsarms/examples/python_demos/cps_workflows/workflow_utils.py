@@ -7,10 +7,9 @@ from dummy import SimulatedSmartDevice, Vial
 sys.path.append(
     '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules')
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
-
+from pyniryo import tcp_client, enums_communication
 
 ### LOCATION DATA
-
 # [x,y,z]
 locations = {
     "grid": {
@@ -34,7 +33,7 @@ def get_pos_data():
     # print(viperx.arm.get_ee_pose())
     # print(viperx.arm.get_joint_commands())
     print(viperx.arm.get_cartesian_pose())
-    # viperx.arm.go_to_home_pose()
+
 
 ### SETUP + TEARDOWN
 def setup_thermoshaker(thermoshaker, safety_temp, wd_1, wd_2):
@@ -44,7 +43,7 @@ def setup_thermoshaker(thermoshaker, safety_temp, wd_1, wd_2):
     thermoshaker.switch_to_normal_operation_mode()
     print("Completed setting up thermoshaker.")
 
-def initialize_devices(ts, hp, dosing, soln, soln_loc, robot):
+def initialize_devices(ts, hp, dosing, soln, viper, ned):
     if ts:
         global thermoshaker
         kwargs = {
@@ -59,22 +58,42 @@ def initialize_devices(ts, hp, dosing, soln, soln_loc, robot):
         hotplate = MockMagneticStirrer(device_port=port)
     if dosing:
         global dosing_device
-        dosing_device = SimulatedSmartDevice("Virtual Dosing Station", 
-                                             {'plane': 'N', 'state': 'closed', 'move_time': 1}, 
-                                             None, None, "dosing a vial")
+        args = {
+            "name": "Virtual Dosing Station",
+            "door": {'plane': 'N', 
+                     'state': 'closed', 
+                     'move_time': 1},
+            "action": "dosing a vial"
+        }
+        dosing_device = SimulatedSmartDevice(args["name"], args["door"], args["action"])
     if soln:
         global vial
-        vial = Vial(5, soln_loc, 20)
-    if robot:
+        args = {
+            "max_vol": 5,
+            "temp": 20
+        }
+        vial = Vial(args["max_vol"], args["temp"])
+    if viper:
         global viperx
         viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
+        viperx.arm.go_to_sleep_pose()
         # viperx.arm.go_to_home_pose()
+    if ned:
+        ned2_ip = "169.254.200.200"
+        global ned2
+        ned2 = tcp_client.NiryoRobot(ned2_ip)
+        ned2.calibrate_auto()
+        ned2.update_tool()
+        ned2.move_to_home_pose()
 
-def disconnect_devices(hp, robot):
+def disconnect_devices(hp, viperx, ned2):
     if hp:
         hotplate.disconnect()
-    if robot:
+    if viperx:
         viperx.arm.go_to_sleep_pose()
+    if ned2:
+        ned2.move_to_home_pose()
+        ned2.close_connection()
 
 
 ### HOTPLATE
@@ -129,103 +148,89 @@ def stop_tempering_soln(thermoshaker):
 
 
 ### VIPERX
-def move_object(viperx, start_positions, end_positions, object):
-    viperx.gripper.open(delay=2)
-
-    # Move to the start position and pick up object
-    if object == "ring":
-        pickup_keys = ["approach", "pickup", "pickup_safe_height"]
-        dropoff_keys = ["pickup_safe_height", "pickup", "approach"]
-    else:
-        pickup_keys = ["pickup_safe_height", "pickup", "pickup_safe_height"]
-        dropoff_keys = ["drop_off_safe_height", "drop_off", "drop_off_safe_height"]
-    
-    viperx.arm.set_joint_positions(joint_positions=start_positions.get(pickup_keys[0]), moving_time=3, accel_time=None, blocking=True)
-    time.sleep(1)
-    viperx.arm.set_joint_positions(joint_positions=start_positions.get(pickup_keys[1]), moving_time=1, accel_time=None, blocking=True)
-    time.sleep(1)
-    viperx.gripper.close(delay=2)
-    viperx.arm.set_joint_positions(joint_positions=start_positions.get(pickup_keys[2]), moving_time=1, accel_time=None, blocking=True)
-
-    # Move to the end position and place object
-    viperx.arm.set_joint_positions(joint_positions=end_positions.get(dropoff_keys[0]), moving_time=3, accel_time=None, blocking=True)
-    time.sleep(1)
-    viperx.arm.set_joint_positions(joint_positions=end_positions.get(dropoff_keys[1]), moving_time=1, accel_time=None, blocking=True)
-    time.sleep(1)
-    viperx.gripper.open(delay=2)
-    viperx.arm.set_joint_positions(joint_positions=end_positions.get(dropoff_keys[2]), moving_time=3, accel_time=None, blocking=True)
-
-    if object == "vial":
-        vial.set_location(end_positions)
-
-
-
-def move_object_cart(viperx, start_positions, end_positions, object):
-    viperx.gripper.open(delay=2)
-
-    # Move to the start position and pick up object
-    if object == "ring":
-        pickup_keys = ["approach", "pickup", "pickup_safe_height"]
-        dropoff_keys = ["pickup_safe_height", "pickup", "approach"]
-    else:
-        pickup_keys = ["pickup_safe_height", "pickup", "pickup_safe_height"]
-        dropoff_keys = ["drop_off_safe_height", "drop_off", "drop_off_safe_height"]
-    
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(start_positions.get(pickup_keys[0]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-    # time.sleep(1)
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(start_positions.get(pickup_keys[1]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-    # time.sleep(1)
-    # viperx.gripper.close(delay=2)
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(start_positions.get(pickup_keys[2]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-
-
-    # Move to the end position and place object
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(end_positions.get(dropoff_keys[0]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-    # time.sleep(1)
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(end_positions.get(dropoff_keys[1]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-    # time.sleep(1)
-    # viperx.gripper.open(delay=2)
-    # pose = viperx.arm.convert_joint_positions_to_cartesian(end_positions.get(dropoff_keys[2]))
-    # viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
-    
-    # if object == "vial":
-    #     vial.set_location(end_positions)
-
+# TODO: could refactor these into one function, but do we want to keep fn names?
 def viperx_pick_up_object(viperx, pose, obj):
-    print(f"Picking up {obj}.")
+    print(f"\nPicking up {obj}.")
     viperx.gripper.open(delay=2)
     if "approach" in pose.keys():
-        viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
-        time.sleep(1)
-    viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
-    time.sleep(1)
-    viperx.arm.set_ee_pose_components(x=pose["pickup"][0], y=pose["pickup"][1], z=pose["pickup"][2])
-    time.sleep(1)
+        viperx_move(viperx, pose["approach"], 1)
+    viperx_move(viperx, pose["pickup_safe_height"], 1)
+    viperx_move(viperx, pose["pickup"], 1)
     viperx.gripper.close(delay=2)
-    viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
+    viperx_move(viperx, pose["pickup_safe_height"], 0)
     if "approach" in pose.keys():
-        viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
-        time.sleep(1)
+        viperx_move(viperx, pose["approach"], 1)
 
 def viperx_place_object(viperx, pose, obj):
     print(f"Placing {obj}.\n")
     if "approach" in pose.keys():
-        viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
-        time.sleep(1)
-    viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
-    time.sleep(1)
-    viperx.arm.set_ee_pose_components(x=pose["pickup"][0], y=pose["pickup"][1], z=pose["pickup"][2])
-    time.sleep(1)
+        viperx_move(viperx, pose["approach"], 1)
+    viperx_move(viperx, pose["pickup_safe_height"], 1)
+    viperx_move(viperx, pose["pickup"], 1)
     viperx.gripper.open(delay=2)
-    viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
+    viperx_move(viperx, pose["pickup_safe_height"], 0)
     if "approach" in pose.keys():
-        viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
-        time.sleep(1)
-    
-    # if obj == "vial":
-    #     vial.set_location(positions)
+        viperx_move(viperx, pose["approach"], 1)
+
+def viperx_move(viperx, pose_key, delay):
+    viperx.arm.set_ee_pose_components(x=pose_key[0], y=pose_key[1], z=pose_key[2])
+    time.sleep(delay)
+
+
+### NED2
+def ned2_pick_up_object(ned2):
+    RobotAxis = enums_communication.RobotAxis
+    safe_height = 0.1 # meters
+    try:
+        ned2.open_gripper() # TODO: should be outside of fn?
+        ned2.wait(1)
+        ned2.grasp_with_tool()
+        ned2.wait(1)
+        ned2.shift_pose(RobotAxis.Z, safe_height)
+    except Exception as e:
+        sys.stderr.write(str(e))
+
+def ned2_place_object(ned2):
+    RobotAxis = enums_communication.RobotAxis
+    safe_height = 0.1 # meters
+    try:
+        ned2.open_gripper()
+        ned2.wait(1)
+        ned2.shift_pose(RobotAxis.Z, safe_height)
+    except Exception as e:
+        sys.stderr.write(str(e))
+
+"""
+:param move_type: "pose" | "joints"
+:param loc_start: PoseObject or list[float] of 6 joints or 6 coordinates (x,y,z,roll,pitch,yaw)
+:param loc_end: PoseObject or list[float] of 6 joints or 6 coordinates (x,y,z,roll,pitch,yaw)
+"""
+def ned2_pick_and_place(ned2, move_type, start_loc, end_loc):
+    RobotAxis = enums_communication.RobotAxis
+    safe_height = 0.1 # meters
+    try:
+        # check if we need to move to safe height
+        if ned2.get_pose().z <= safe_height:
+            ned2.shift_pose(RobotAxis.Z, safe_height)
+        ned2.move_pose(start_loc) if move_type == "pose" else ned2.move_joints(start_loc)
+        ned2_pick_up_object(ned2)
+        ned2.move_pose(end_loc) if move_type == "pose" else ned2.move_joints(end_loc)
+        ned2_place_object(ned2)
+    except Exception as e:
+        sys.stderr.write(str(e))
+
+class SetTrace(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __enter__(self):
+        sys.settrace(self.func)
+
+    def __exit__(self, ext_type, exc_value, traceback):
+        sys.settrace(None)
+
+# TODO: add call to ViperX here, push to file instead of printing
+def monitor_hardware(frame, event, arg):
+    if event == "line":
+        print(ned2.get_hardware_status())
+    return monitor_hardware
