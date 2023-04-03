@@ -220,12 +220,12 @@ def viperx_place_object(viperx, pose, obj):
     viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
     time.sleep(1)
     viperx.arm.set_ee_pose_components(x=pose["pickup"][0], y=pose["pickup"][1], z=pose["pickup"][2])
-    time.sleep(1)
-    viperx.gripper.open(delay=2)
-    viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
-    if "approach" in pose.keys():
-        viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
-        time.sleep(1)
+    # time.sleep(1)
+    # viperx.gripper.open(delay=2)
+    # viperx.arm.set_ee_pose_components(x=pose["pickup_safe_height"][0], y=pose["pickup_safe_height"][1], z=pose["pickup_safe_height"][2])
+    # if "approach" in pose.keys():
+    #     viperx.arm.set_ee_pose_components(x=pose["approach"][0], y=pose["approach"][1], z=pose["approach"][2])
+    #     time.sleep(1)
     
     # if obj == "vial":
     #     vial.set_location(positions)

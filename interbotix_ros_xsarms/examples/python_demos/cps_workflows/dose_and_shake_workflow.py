@@ -1,7 +1,8 @@
+username = 'viperx'
+# username = 'cpsadmin'
 import sys
 
-sys.path.append(r'/home/cpsadmin/niraapad/')
-# sys.path.append(module_path)
+sys.path.append(r'/home/{}/niraapad/'.format(username))
 
 # Import the module
 import niraapad.backends
@@ -10,17 +11,17 @@ from niraapad.lab_computer.niraapad_client import NiraapadClient
 
 host = 'localhost'
 port = '1337'
-abstract = '/home/cpsadmin/niraapad/niraapad/sarwat/abstract_config_file_testbed.json'
+abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed.json'.format(username)
 NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
 
 import os
-module_path = os.path.abspath('/home/viperx/Downloads/ika-master/')
+module_path = os.path.abspath('/home/{}/Downloads/ika-master/'.format(username))
 sys.path.append(module_path)
 
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer
 sys.path.append(
-    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules')
+    '/home/{}/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules'.format(username))
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
 import workflow_utils
@@ -40,7 +41,7 @@ if __name__ == '__main__':
                                              {'plane': 'N', 'state': 'closed', 'move_time': 1}, 
                                              None, None, "dosing a vial")
  
-    vial = Vial(5, None, 20)
+    vial = Vial(10, None, 20)
     
     global viperx
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
