@@ -10,20 +10,51 @@ from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from pyniryo import tcp_client, enums_communication
 
 ### LOCATION DATA
-# [x,y,z]
+# [x,y,z, roll, pitch, yaw]
+# where x/y/z are in m, roll/pitch/yaw are in radians
 locations = {
     "grid": {
-        "pickup_safe_height": [0.54, -0.00222128,  0.23],
-        "pickup": [0.53,   0.00102628, 0.11]
+        "NW": {
+            "meta": "original vial location",
+            "viperx": {
+                "pickup_safe_height": [0.54, -0.00222128,  0.23],
+                "pickup": [0.53,   0.00102628, 0.11]
+            },
+            "ned2": {
+                "pickup_safe_height": [0.451, -0.022 , 0.202, -0.099, 0.028, -0.020],
+                "pickup": [0.447, -0.015, 0.108, -0.078, 0.121, -0.008]
+            },
+        },
+        "SE": {
+            "meta": "imaginary hotplate for now",
+            "ned2": {
+                "pickup_safe_height": [0.240, 0.061, 0.202, -0.037, 0.061, 0.046],
+                "pickup": [0.233, 0.062, 0.113, -0.071, 0.076, 0.069]
+            }
+        }
     },
     "dosing_device": {
-        "approach": [0.16402257, 0.34746304, 0.19],
-        "pickup_safe_height": [0.16247981, 0.47495207, 0.19],
-        "pickup": [0.15748769, 0.45, 0.10]
+        "viperx": {
+            "approach": [0.16402257, 0.34746304, 0.19],
+            "pickup_safe_height": [0.16247981, 0.47495207, 0.19],
+            "pickup": [0.15748769, 0.45, 0.10]
+        }
     },
     "thermoshaker": {
-        "pickup_safe_height": [0.51193886, -0.28478028,  0.21],
-        "pickup": [0.51300577, -0.28429177,  0.11]
+        "viperx": {
+            "pickup_safe_height": [0.51193886, -0.28478028,  0.21],
+            "pickup": [0.51300577, -0.28429177,  0.11]
+        }
+    },
+    "hotplate": {
+        "viperx": {
+            "pickup_safe_height": [],
+            "pickup": []
+        },
+        "ned2": {
+            "pickup_safe_height": [],
+            "pickup": []
+        }
     }
 }
 
@@ -103,12 +134,12 @@ def start_stirring_soln(hotplate, start_stir_rate, delay):
     hotplate.target_stir_rate = start_stir_rate
     time.sleep(delay)
 
-def start_heating_soln(hotplate, start_temp, delay):
+def start_heating_soln(hotplate, vial, start_temp, delay):
     print("[HOTPLATE]: Starting to heat solution...")
     hotplate.target_temperature = start_temp
     hotplate.start_heating()
     time.sleep(delay)
-    vial.set_temp(start_temp)
+    # vial.change_temp(start_temp)
 
 def stop_stirring_soln(hotplate, end_stir_rate, delay):
     hotplate.target_stir_rate = end_stir_rate
@@ -116,12 +147,12 @@ def stop_stirring_soln(hotplate, end_stir_rate, delay):
     hotplate.stop_stirring()
     print("[HOTPLATE]: Stopped stirring solution.")
 
-def stop_heating_soln(hotplate, end_temp, delay):
+def stop_heating_soln(hotplate, vial, end_temp, delay):
     hotplate.target_temperature = end_temp
     time.sleep(delay)
     hotplate.stop_heating()
     print("[HOTPLATE]: Stopped heating solution.")
-    vial.set_temp(end_temp)
+    # vial.change_temp(end_temp)
 
 
 ### THERMOSHAKER
@@ -131,12 +162,13 @@ def start_shaking_soln(thermoshaker, speed, delay):
     thermoshaker.start_shaking()
     time.sleep(delay)
 
-def start_tempering_soln(thermoshaker, temp, delay):
-    thermoshaker.set_temperature = temp
+# TODO: debug change_temp
+def start_tempering_soln(thermoshaker, vial, goal_temp, delay):
+    thermoshaker.set_temperature = goal_temp
     print("[THERMOSHAKER]: Starting to temper solution...")
     thermoshaker.start_tempering()
     time.sleep(delay)
-    vial.set_temp(temp)
+    # vial.change_temp(goal_temp)
 
 def stop_shaking_soln(thermoshaker):
     thermoshaker.stop_shaking()
@@ -149,8 +181,10 @@ def stop_tempering_soln(thermoshaker):
 
 ### VIPERX
 # TODO: could refactor these into one function, but do we want to keep fn names?
+# TODO: could add a unique name/id to Vial and use getter to retrieve it for printing
 def viperx_pick_up_object(viperx, pose, obj):
-    print(f"\nPicking up {obj}.")
+    name = obj.__class__.__name__
+    print(f"\n[VIPERX]: Picking up {name}.")
     viperx.gripper.open(delay=2)
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
@@ -162,7 +196,8 @@ def viperx_pick_up_object(viperx, pose, obj):
         viperx_move(viperx, pose["approach"], 1)
 
 def viperx_place_object(viperx, pose, obj):
-    print(f"Placing {obj}.\n")
+    name = obj.__class__.__name__
+    print(f"[VIPERX]: Placing {name}.\n")
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
     viperx_move(viperx, pose["pickup_safe_height"], 1)
@@ -172,52 +207,51 @@ def viperx_place_object(viperx, pose, obj):
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
 
-def viperx_move(viperx, pose_key, delay):
-    viperx.arm.set_ee_pose_components(x=pose_key[0], y=pose_key[1], z=pose_key[2])
+def viperx_move(viperx, pose, delay):
+    viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
     time.sleep(delay)
 
 
 ### NED2
-def ned2_pick_up_object(ned2):
-    RobotAxis = enums_communication.RobotAxis
-    safe_height = 0.1 # meters
+def ned2_pick_up_object(ned2, pose, obj):
+    name = obj.__class__.__name__
+    print(f"\n[NED2]: Picking up {name}.")
+    if "approach" in pose.keys():
+        ned2_move(ned2, pose["approach"], 1)
+    ned2_move(ned2, pose["pickup_safe_height"],1)
+    ned2.open_gripper()
+    ned2.wait(1)
+    ned2_move(ned2, pose["pickup"],1)
     try:
-        ned2.open_gripper() # TODO: should be outside of fn?
-        ned2.wait(1)
         ned2.grasp_with_tool()
         ned2.wait(1)
-        ned2.shift_pose(RobotAxis.Z, safe_height)
+        ned2_move(ned2, pose["pickup_safe_height"],1)
+        if "approach" in pose.keys():
+            ned2_move(ned2, pose["approach"], 1)
     except Exception as e:
         sys.stderr.write(str(e))
 
-def ned2_place_object(ned2):
-    RobotAxis = enums_communication.RobotAxis
-    safe_height = 0.1 # meters
+def ned2_place_object(ned2, pose, obj):
+    name = obj.__class__.__name__
+    print(f"[NED2]: Placing {name}.\n")
+    if "approach" in pose.keys():
+        ned2_move(ned2, pose["approach"], 1)
+    ned2_move(ned2, pose["pickup_safe_height"],1)
+    ned2_move(ned2, pose["pickup"],1)
     try:
-        ned2.open_gripper()
+        ned2.release_with_tool()
         ned2.wait(1)
-        ned2.shift_pose(RobotAxis.Z, safe_height)
+        ned2_move(ned2, pose["pickup_safe_height"],1)
+        if "approach" in pose.keys():
+            ned2_move(ned2, pose["approach"], 1)
     except Exception as e:
         sys.stderr.write(str(e))
 
-"""
-:param move_type: "pose" | "joints"
-:param loc_start: PoseObject or list[float] of 6 joints or 6 coordinates (x,y,z,roll,pitch,yaw)
-:param loc_end: PoseObject or list[float] of 6 joints or 6 coordinates (x,y,z,roll,pitch,yaw)
-"""
-def ned2_pick_and_place(ned2, move_type, start_loc, end_loc):
-    RobotAxis = enums_communication.RobotAxis
-    safe_height = 0.1 # meters
-    try:
-        # check if we need to move to safe height
-        if ned2.get_pose().z <= safe_height:
-            ned2.shift_pose(RobotAxis.Z, safe_height)
-        ned2.move_pose(start_loc) if move_type == "pose" else ned2.move_joints(start_loc)
-        ned2_pick_up_object(ned2)
-        ned2.move_pose(end_loc) if move_type == "pose" else ned2.move_joints(end_loc)
-        ned2_place_object(ned2)
-    except Exception as e:
-        sys.stderr.write(str(e))
+# pose = [x,y,z,roll,pitch,yaw] where x/y/z are in m, roll/pitch/yaw are in radians
+# TODO: should we support other types of moves?
+def ned2_move(ned2, pose, delay):
+    ned2.move_pose(pose)
+    time.sleep(delay)
 
 class SetTrace(object):
     def __init__(self, func):
@@ -230,6 +264,7 @@ class SetTrace(object):
         sys.settrace(None)
 
 # TODO: add call to ViperX here, push to file instead of printing
+# would need to access global robot connections
 def monitor_hardware(frame, event, arg):
     if event == "line":
         print(ned2.get_hardware_status())

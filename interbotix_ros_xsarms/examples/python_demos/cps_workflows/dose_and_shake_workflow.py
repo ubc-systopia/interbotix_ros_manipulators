@@ -1,5 +1,5 @@
-username = 'viperx'
-# username = 'cpsadmin'
+# username = 'viperx'
+username = 'cpsadmin'
 import sys
 
 sys.path.append(r'/home/{}/niraapad/'.format(username))
@@ -25,7 +25,7 @@ sys.path.append(
     '/home/{}/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules'.format(username))
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
-import workflow_utils
+from workflow_utils import setup_thermoshaker, viperx_pick_up_object, viperx_place_object, start_shaking_soln, stop_shaking_soln, disconnect_devices, locations
 
 if __name__ == '__main__':
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         }
     global thermoshaker
     thermoshaker = Thermoshaker.create(**kwargs)
-    workflow_utils.setup_thermoshaker(thermoshaker, 15.5, 30, 30)
+    setup_thermoshaker(thermoshaker, 15.5, 30, 30)
     
     dosing_device = SimulatedSmartDevice("Virtual Dosing Station", {"plane": "N","state": "closed","move_time": 1},"dosing a vial")
  
@@ -47,11 +47,15 @@ if __name__ == '__main__':
     viperx.arm.go_to_sleep_pose()
     viperx.arm.go_to_home_pose()
     
+    # Set vial locations
+    grid_location = locations["grid"]["NW"]["viperx"]
+    dosing_device_location = locations["dosing_device"]["viperx"]
+    thermoshaker_location = locations["thermoshaker"]["viperx"]
 
-    # Start demo
+    # Start workflow
     dosing_device.set_door("state", "open")
-    workflow_utils.viperx_pick_up_object(viperx,workflow_utils.locations["grid"], "vial")
-    workflow_utils.viperx_place_object(viperx, workflow_utils.locations["dosing_device"], "vial")
+    viperx_pick_up_object(viperx,grid_location, vial)
+    viperx_place_object(viperx, dosing_device_location, vial)
     
     viperx.arm.go_to_home_pose()
 
@@ -59,19 +63,18 @@ if __name__ == '__main__':
     dosing_device.run_action(delay=3, quantity=5)
     dosing_device.stop_action(delay=0)
     dosing_device.set_door("state", "open")
-    workflow_utils.viperx_pick_up_object(viperx, workflow_utils.locations["dosing_device"], "vial")
-    workflow_utils.viperx_place_object(viperx, workflow_utils.locations["thermoshaker"], "vial")
+    viperx_pick_up_object(viperx, dosing_device_location, vial)
+    viperx_place_object(viperx, thermoshaker_location, vial)
     viperx.arm.go_to_home_pose()
     dosing_device.set_door("state", "closed")
 
-    workflow_utils.start_shaking_soln(thermoshaker, 200, 2)
-    workflow_utils.stop_shaking_soln(thermoshaker)
+    start_shaking_soln(thermoshaker, 200, 2)
+    stop_shaking_soln(thermoshaker)
 
-    viperx.arm.go_to_home_pose()
-    workflow_utils.viperx_pick_up_object(viperx, workflow_utils.locations["thermoshaker"], "vial")
-    workflow_utils.viperx_place_object(viperx, workflow_utils.locations["grid"], "vial")
+    viperx_pick_up_object(viperx, thermoshaker_location, vial)
+    viperx_place_object(viperx, grid_location, vial)
     
     viperx.arm.go_to_home_pose()
-    workflow_utils.disconnect_devices(hp=False, viperx=viperx, ned2=False)
+    disconnect_devices(hp=False, viperx=viperx, ned2=False)
   
     

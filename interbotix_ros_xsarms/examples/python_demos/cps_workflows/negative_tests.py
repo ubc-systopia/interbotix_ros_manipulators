@@ -1,20 +1,28 @@
+# username = 'viperx'
+username = 'cpsadmin'
 import sys
-sys.path.append(r'/home/cpsadmin/niraapad/')
 
+sys.path.append(r'/home/{}/niraapad/'.format(username))
+
+# Import the module
 import niraapad.backends
+
 from niraapad.lab_computer.niraapad_client import NiraapadClient
 
 host = 'localhost'
 port = '1337'
-# domain = '/home/cpsadmin/niraapad/niraapad/sarwat/testbed_domain_config_file_template.json'
-NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=None, domain_configdir=None)
+abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed.json'.format(username)
+NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
 
-import time
+# Unnecessary on ispy, using a local forked version of ika
+# import os
+# module_path = os.path.abspath('/home/viperx/Downloads/ika-master/')
+# sys.path.append(module_path)
+
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer
-
 sys.path.append(
-    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules')
+    '/home/{}/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules'.format(username))
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
 import workflow_utils
@@ -57,7 +65,7 @@ if __name__ == '__main__':
     viperx.arm.set_ee_pose_components()
     # Fail (collision)
 
-    # Rule 4
+    # TODO: Rule 4
 
     # Rule 5
     workflow_utils.viperx_pick_up_object(viperx,workflow_utils.locations["grid"], "vial")
