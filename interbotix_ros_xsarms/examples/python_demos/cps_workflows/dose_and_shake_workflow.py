@@ -1,4 +1,4 @@
-# username = 'viperx'
+#username = 'viperx'
 username = 'cpsadmin'
 import sys
 import time
@@ -13,11 +13,6 @@ host = 'localhost'
 port = '1337'
 abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
 NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
-
-# Unnecessary on ispy, using a local forked version of ika
-# import os
-# module_path = os.path.abspath('/home/viperx/Downloads/ika-master/')
-# sys.path.append(module_path)
 
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer
@@ -47,10 +42,8 @@ if __name__ == '__main__':
     
     
     viperx.arm.go_to_sleep_pose()
-    #exit(1)
+  
     viperx.arm.go_to_home_pose()
-    
-    # print("   Expected: open, Actual: ", get_viperx_gripper_state(viperx))
 
     # Set vial locations
     grid_location = locations["grid"]["NW"]["viperx"]
@@ -60,9 +53,7 @@ if __name__ == '__main__':
     # Start workflow
     dosing_device.set_door("state", "open")
     viperx_pick_up_object(viperx, grid_location, vial)
-    # print("   Expected: closed, Actual: ", get_viperx_gripper_state(viperx))
     viperx_place_object(viperx, dosing_device_location, vial)
-    # print("   Expected: open, Actual: ", get_viperx_gripper_state(viperx))
     
     viperx.arm.go_to_home_pose()
 
@@ -70,24 +61,19 @@ if __name__ == '__main__':
     dosing_device.run_action(delay=3, quantity=5)
     dosing_device.stop_action(delay=0)
     dosing_device.set_door("state", "open")
-    # print("   Expected: open, Actual: ", get_viperx_gripper_state(viperx))
+
     viperx_pick_up_object(viperx, dosing_device_location, vial)
-    
-    # print("   Expected: closed, Actual: ", get_viperx_gripper_state(viperx))
     viperx_place_object(viperx, thermoshaker_location, vial)
 
-    # print("   Expected: open, Actual: ", get_viperx_gripper_state(viperx))
+    
     viperx.arm.go_to_home_pose()
     dosing_device.set_door("state", "closed")
 
     start_shaking_soln(thermoshaker, 200, 2)
     stop_shaking_soln(thermoshaker)
 
-    # print("Expected: open, Actual: ", get_viperx_gripper_state(viperx))
     viperx_pick_up_object(viperx, thermoshaker_location, vial)
-    # print("Expected: closed, Actual: ", get_viperx_gripper_state(viperx))
     viperx_place_object(viperx, grid_location, vial)
-    # print("Expected: open, Actual: ", get_viperx_gripper_state(viperx))
     
     viperx.arm.go_to_home_pose()
     disconnect_devices(hp=False, viperx=viperx, ned2=False)
