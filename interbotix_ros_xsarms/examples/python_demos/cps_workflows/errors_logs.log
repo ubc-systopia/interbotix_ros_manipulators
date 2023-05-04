@@ -1,0 +1,8 @@
+[ERROR] [1681861789.897145795]: [xs_sdk] Failed to write value[0] on items[Return_Delay_Time] to [ID : 2]
+[FATAL] [1681861789.897238005]: [xs_sdk] Failed to write configurations to all motors. Shutting down...
+[FATAL] [1681861789.897268994]: [xs_sdk] For troubleshooting, please see 'https://docs.trossenrobotics.com/interbotix_xsarms_docs/troubleshooting.html'
+
+[ERROR] [1681861752.095700369]: [xs_sdk] [TxRxResult] Failed transmit instruction packet!
+[ERROR] [1681861752.105800012]: [xs_sdk] [TxRxResult] Failed transmit instruction packet!
+[vx300s/xs_sdk-4] killing on exit
+[ERROR] [1681861752.115739713]: [xs_sdk] [TxRxResult] Failed transmit instruction packet!

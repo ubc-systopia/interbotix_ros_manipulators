@@ -1,26 +1,171 @@
 {
-    "grid": {
-        "min_x": 0.52, 
-        "min_y": 0.0034, 
-        "min_z": 0.0135, 
-        "max_x": 0.61, 
-        "max_y": 0.228, 
-        "max_z": 0.10
+    "equivalences": {
+        "ned2": {
+            "x": "full_grid-min_x == hotplate-min_x, full_grid-max_x == half_grid-max_x, half_grid-min_x == hotplate-max_x",
+            "y": "full_grid-min_y == hotplate-min_y == half_grid-min_y, full_grid-max_y == hotplate-max_y == half_grid-max_y"
+        },
+        "viperx": {
+            "x": "full_grid-min_x == hotplate-min_x == half_grid-min_x, full_grid-max_x == hotplate-max_x == half_grid-max_x",
+            "y": "full_grid-min_y == hotplate-min_y, full_grid-max_y == half_grid-max_y, half_grid-min_y == hotplate-max_y"
+        },
+        "z": "full_grid-min_z == hotplate-min_z == half_grid-min_z, full_grid-max_z == hotplate-max_z == half_grid-max_z"
+    },
+    "full_grid": {
+        "viperx": {
+            "min_x": 0.52, 
+            "min_y": 0.0034, 
+            "min_z": 0.0135, 
+            "max_x": 0.61, 
+            "max_y": 0.228, 
+            "max_z": 0.10
+        },
+        "ned2": {
+            "min_x": 0.200, 
+            "min_y": -0.028, 
+            "min_z": 0.018, 
+            "max_x": 0.473, 
+            "max_y": 0.068, 
+            "max_z": 0.167
+        },
+        "global": {
+            "min_x": -0.02, 
+            "min_y": -0.0146,
+            "min_z": -0.2165, 
+            "max_x": 0.07, 
+            "max_y": 0.21, 
+            "max_z": -0.13
+        }
+    },
+    "half_grid": {
+        "descr": "imagining the grid is cut in half for 2-robot workflow",
+        "viperx": {
+            "min_x": 0.52, 
+            "min_y": 0.09324,
+            "min_z": 0.0135, 
+            "max_x": 0.61, 
+            "max_y": 0.228,
+            "max_z": 0.10
+        },
+        "ned2": {
+            "min_x": 0.326,
+            "min_y": -0.028, 
+            "min_z": 0.018, 
+            "max_x": 0.473, 
+            "max_y": 0.068, 
+            "max_z": 0.167
+        },
+        "global": {
+            "min_x": -0.02, 
+            "min_y": 0.07524, 
+            "min_z": -0.2165, 
+            "max_x": 0.07, 
+            "max_y": 0.21, 
+            "max_z": -0.13
+        }
     },
     "dosing_device": {
-        "min_x": 0.06, 
-        "min_y": 0.43, 
-        "min_z": 0.0135, 
-        "max_x": 0.27, 
-        "max_y": 0.51, 
-        "max_z": 0.29
+        "viperx": {
+            "min_x": 0.06, 
+            "min_y": 0.43, 
+            "min_z": 0.0135, 
+            "max_x": 0.27, 
+            "max_y": 0.51, 
+            "max_z": 0.29
+        },
+        "ned2": {
+            "min_x": -0.012, 
+            "min_y": -0.422, 
+            "min_z": 0.018, 
+            "max_x": 0.071, 
+            "max_y": -0.219, 
+            "max_z": 0.330
+        },
+        "global": {
+            "min_x": -0.48, 
+            "min_y": 0.412, 
+            "min_z": -0.2165, 
+            "max_x": -0.27, 
+            "max_y": 0.492, 
+            "max_z": 0.06
+        }
     },
     "thermoshaker": {
-        "min_x": 0.436, 
-        "min_y": -0.32, 
-        "min_z": 0.0135, 
-        "max_x": 0.549, 
-        "max_y": -0.23, 
-        "max_z": 0.081
+        "viperx": {
+            "min_x": 0.436, 
+            "min_y": -0.32, 
+            "min_z": 0.0135, 
+            "max_x": 0.549, 
+            "max_y": -0.23, 
+            "max_z": 0.081
+        },
+        "global": {
+            "min_x": -0.104, 
+            "min_y": -0.338, 
+            "min_z": -0.2165, 
+            "max_x": 0.009, 
+            "max_y": -0.248, 
+            "max_z": -0.149
+        }
+    },
+    "hotplate": {
+        "descr": "imagining the grid is cut in half for 2-robot workflow",
+        "viperx": {
+            "min_x": 0.52, 
+            "min_y": 0.0034,
+            "min_z": 0.0135, 
+            "max_x": 0.61, 
+            "max_y": 0.09324,
+            "max_z": 0.10
+        },
+        "ned2": {
+            "min_x": 0.200, 
+            "min_y": -0.028, 
+            "min_z": 0.018, 
+            "max_x": 0.326,
+            "max_y": 0.068, 
+            "max_z": 0.167
+        },
+        "global": {
+            "min_x": -0.02, 
+            "min_y": -0.0146, 
+            "min_z": -0.2165, 
+            "max_x": 0.07, 
+            "max_y": 0.07524, 
+            "max_z": -0.13
+        }
+    },
+    "test_new_origin_dont_use": {
+        "meta": "origin of the two-robot coordinate system",
+        "extra": "Roll : -0.208, Pitch : 1.073, Yaw : -0.442",
+        "extra2": "Roll : 0.044, Pitch : 0.782, Yaw : -0.056",
+        "original_xy": [0.313, -0.170],
+        "ned2": {
+            "x":0.265,
+            "y": -0.162,
+            "z": 0.066,
+            "qx": 0.03119848932068902,
+            "qy": 0.3804068046241505,
+            "qz": -0.03449633120827207,
+            "qw": 0.9236489161975562
+
+        },
+        "viperx": {
+            "x": 0.36216396,
+            "y": 0.15244984,
+            "z": 0.00803854
+        }
+    },
+    "global_origin": {
+        "meta": "using grid_nw pickup_safe_height to try to deal with offset",
+        "ned2": {
+            "x": 0.443,
+            "y": -0.014,
+            "z": 0.292
+        },
+        "viperx": {
+            "x": 0.54,
+            "y": 0.018,
+            "z": 0.23
+        }
     }
 }
