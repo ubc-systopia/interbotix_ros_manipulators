@@ -24,7 +24,9 @@ locations = {
             },
             "ned2": {
                 "pickup_safe_height": [0.443, -0.010 , 0.292, -0.099, 0.028, -0.020],
+                #"pickup_safe_height": [0.167, 0.004, 0.093, -0.163, 1.444, 0.012],
                 "pickup": [0.443, -0.010, 0.13, -0.078, 0.121, -0.008]
+               #"pickup": [0.34, 0.004, 0.093, -0.163, 1.444, 0.012]
             },
         },
         "SE": {
@@ -37,7 +39,8 @@ locations = {
     },
     "dosing_device": {
         "viperx": {
-            "approach": [0.15, 0.347, 0.19],
+            #"approach": [-0.25, 0.347, 0.19],             
+            "approach": [0.15, 0.347, 0.19],           
             "pickup_safe_height": [0.15, 0.475, 0.19],
             "pickup": [0.15, 0.45, 0.10]
         }
@@ -191,6 +194,7 @@ def viperx_pick_up_object(viperx, pose, obj):
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
     viperx_move(viperx, pose["pickup_safe_height"], 1)
+    
     viperx_move(viperx, pose["pickup"], 1)
     viperx.gripper.close(delay=2)
     viperx_move(viperx, pose["pickup_safe_height"], 0)
@@ -202,15 +206,20 @@ def viperx_place_object(viperx, pose, obj):
     print(f"[VIPERX]: Placing {name}.\n")
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
-    input('Continue')
-    print('Safe height of dosing device: ', pose["pickup_safe_height"])
+        #pose["approach"][1] += 0.1
+        #viperx_move(viperx, pose["approach"], 1)   
     viperx_move(viperx, pose["pickup_safe_height"], 1)
-    input('Continue')
     viperx_move(viperx, pose["pickup"], 1)
-    input('Continue')
     viperx.gripper.open(delay=2)
-    input('Continue')
     viperx_move(viperx, pose["pickup_safe_height"], 0)
+    # temp_pose = pose["pickup_safe_height"]
+    # temp_pose[0] += 0.1
+    # temp_pose[1] += 0.2    
+    # temp_pose[2] += 0.1    
+    # print(pose["pickup_safe_height"], temp_pose)
+    # input("continue?")
+    # viperx_move(viperx, temp_pose, 0)    
+    # input("continue?")
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
 
@@ -286,7 +295,8 @@ def ned2_pick_up_object(ned2, pose, obj):
     ned2.wait(1)
     ned2_move(ned2, pose["pickup"],1)
     try:
-        ned2.grasp_with_tool()
+        #ned2.grasp_with_tool()
+        ned2.close_gripper()
         ned2.wait(1)
         ned2_move(ned2, pose["pickup_safe_height"],1)
         if "approach" in pose.keys():
@@ -302,7 +312,7 @@ def ned2_place_object(ned2, pose, obj):
     ned2_move(ned2, pose["pickup_safe_height"],1)
     ned2_move(ned2, pose["pickup"],1)
     try:
-        ned2.release_with_tool()
+        ned2.open_gripper()
         ned2.wait(1)
         ned2_move(ned2, pose["pickup_safe_height"],1)
         if "approach" in pose.keys():

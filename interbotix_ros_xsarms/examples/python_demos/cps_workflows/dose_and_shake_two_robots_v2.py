@@ -45,12 +45,8 @@ if __name__ == '__main__':
     global viperx
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
-    
     viperx.arm.go_to_home_pose()
-    
 
-    pose = [0.54, 0.030, 0.23]
-    viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
    
     ned2_ip = "169.254.200.200"
     global ned2

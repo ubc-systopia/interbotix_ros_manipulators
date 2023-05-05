@@ -45,12 +45,8 @@ if __name__ == '__main__':
     global viperx
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
-    
     viperx.arm.go_to_home_pose()
     
-
-    pose = [0.54, 0.030, 0.23]
-    viperx.arm.set_ee_pose_components(x=pose[0], y=pose[1], z=pose[2])
    
     ned2_ip = "169.254.200.200"
     global ned2
@@ -58,7 +54,7 @@ if __name__ == '__main__':
     ned2.calibrate_auto()
     ned2.update_tool()
     ned2.move_pose([0.1342,0.0000, 0.1650,-0.003, 1.001, 0.000])
-   
+  
 
     # Set vial locations
     ned2_grid = locations["grid"]["NW"]["ned2"]
@@ -70,8 +66,12 @@ if __name__ == '__main__':
     # Start workflow
     dosing_device.set_door("state", "open")
     vial.decap_vial()
+
+
     viperx_pick_up_object(viperx, viperx_grid, vial)
     viperx_place_object(viperx, viperx_dosing_device, vial)
+   
+    
     viperx.arm.go_to_home_pose()
     
 
