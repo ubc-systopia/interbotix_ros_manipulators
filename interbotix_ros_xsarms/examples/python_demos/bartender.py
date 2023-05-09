@@ -31,30 +31,29 @@ def main():
 
 
 
-    viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
+   # viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     ned2_ip = "169.254.200.200"
     global ned2
     ned2 = tcp_client.NiryoRobot(ned2_ip)
     ned2.calibrate_auto()
     ned2.update_tool()
 
-    vpose = [0.5123002,  0.29463251, 0.26257251]
-    viperx.arm.set_ee_pose_components(x=vpose[0], y=vpose[1], z=vpose[2])
+    # vpose = [0.47984262, 0.36066606, 0.57495028 ]
+    # viperx.arm.set_ee_pose_components(x=vpose[0], y=vpose[1], z=vpose[2])
+
+
+    # viperpos = viperx.arm.get_cartesian_pose()
+    # print('ViperX: ', viperpos)
 
 
     # viperx.arm.go_to_home_pose()
-    # viperx.arm.go_to_sleep_pose()
-
-    viperpos = viperx.arm.get_cartesian_pose()
-    print('ViperX: ', viperpos)
-
-
+    #viperx.arm.go_to_sleep_pose()
   
-
-    npose = []
+    ned2.move_to_home_pose()
+    npose = [-0.49,  0.0000, 0.1651, 0.003, -1.000, -0.000]
     ned2.move_pose(npose)
-
-    # ned2.move_to_home_pose()
+    #ned2.close_gripper
+    
 
     ned2pose = ned2.pose
     print('Ned2: ', ned2pose)
