@@ -1,18 +1,18 @@
 #username = 'viperx'
 username = 'cpsadmin'
 import sys
-import time
-sys.path.append(r'/home/{}/niraapad/'.format(username))
+# import time
+# sys.path.append(r'/home/{}/niraapad/'.format(username))
 
-# Import the module
-import niraapad.backends
+# # Import the module
+# import niraapad.backends
 
-from niraapad.lab_computer.niraapad_client import NiraapadClient
+# from niraapad.lab_computer.niraapad_client import NiraapadClient
 
-host = 'localhost'
-port = '1337'
-abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
-NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
+# host = 'localhost'
+# port = '1337'
+# abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
+# NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
 
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer

@@ -8,13 +8,13 @@ username = 'cpsadmin'
 sys.path.append(r'/home/{}/niraapad/'.format(username))
 
 # Import the module
-import niraapad.backends
-from niraapad.lab_computer.niraapad_client import NiraapadClient
+# import niraapad.backends
+# from niraapad.lab_computer.niraapad_client import NiraapadClient
 
-host = 'localhost'
-port = '1337'
-abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
-NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
+# host = 'localhost'
+# port = '1337'
+# abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
+# NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
 
 
 from ika.thermoshaker import Thermoshaker
@@ -35,7 +35,6 @@ viperx_thermoshaker = locations["thermoshaker"]["viperx"]
 
 def run_viperx(viperx):
     viperx.arm.go_to_sleep_pose()
-    
     # First Time
     viperx.arm.go_to_home_pose()
     viperx_pick_up_object(viperx, viperx_grid, vial)
@@ -92,7 +91,8 @@ if __name__ == '__main__':
     global viperx
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
-
+    
+    time.sleep(2)
     run_viperx(viperx)
 
 

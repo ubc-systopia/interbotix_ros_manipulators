@@ -19,8 +19,8 @@ locations = {
         "NW": {
             "meta": "original vial location",
             "viperx": {
-                "pickup_safe_height": [0.54, 0.018,  0.23],
-                "pickup": [0.54, 0.018, 0.12]
+                "pickup_safe_height": [0.537, 0.018,  0.23],
+                "pickup": [0.537, 0.018, 0.12]
             },
             "ned2": {
                 "pickup_safe_height": [0.443, -0.010 , 0.292, -0.099, 0.028, -0.020],
@@ -30,8 +30,8 @@ locations = {
         "SE": {
             "meta": "imaginary hotplate for now",
             "ned2": {
-                "pickup_safe_height": [0.233, 0.062, 0.292, -0.037, 0.061, 0.046],
-                "pickup": [0.233, 0.062, 0.13, -0.071, 0.076, 0.069]
+                "pickup_safe_height": [0.23, 0.062, 0.3, -0.037, 0.061, 0.046],
+                "pickup": [0.23, 0.062, 0.13, -0.033, 0.142, -0.004]
             }
         }
     },
@@ -43,14 +43,14 @@ locations = {
         },
         "ned2": {         
             "approach": [-0.008, -0.366, 0.234, -0.033, 0.015, -1.626],           
-            "pickup_safe_height": [-0.009, -0.486, 0.196, -0.046, -0.032, -1.611],
-            "pickup": [-0.009, -0.486, 0.110, -0.046, -0.032, -1.611]
+            "pickup_safe_height": [-0.009, -0.495, 0.196, -0.046, -0.032, -1.611],
+            "pickup": [-0.009, -0.495, 0.113, -0.046, -0.032, -1.611]
         }
     },
     "thermoshaker": {
         "viperx": {
-            "pickup_safe_height": [0.515, -0.27,  0.23],
-            "pickup": [0.515, -0.27,  0.12]
+            "pickup_safe_height": [0.527, -0.272,  0.23],
+            "pickup": [0.527, -0.272,  0.12]
         }
     },
     "hotplate": {
@@ -68,8 +68,6 @@ locations = {
 def get_pos_data():
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
-    # print(viperx.arm.get_ee_pose())
-    # print(viperx.arm.get_joint_commands())
     print(viperx.arm.get_cartesian_pose())
 
 
@@ -115,7 +113,6 @@ def initialize_devices(ts, hp, dosing, soln, viper, ned):
         global viperx
         viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
         viperx.arm.go_to_sleep_pose()
-        # viperx.arm.go_to_home_pose()
     if ned:
         ned2_ip = "169.254.200.200"
         global ned2
@@ -208,20 +205,11 @@ def viperx_place_object(viperx, pose, obj):
     print(f"[VIPERX]: Placing {name}.\n")
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
-        #pose["approach"][1] += 0.1
-        #viperx_move(viperx, pose["approach"], 1)   
     viperx_move(viperx, pose["pickup_safe_height"], 1)
     viperx_move(viperx, pose["pickup"], 1)
     viperx.gripper.open(delay=2)
+    
     viperx_move(viperx, pose["pickup_safe_height"], 0)
-    # temp_pose = pose["pickup_safe_height"]
-    # temp_pose[0] += 0.1
-    # temp_pose[1] += 0.2    
-    # temp_pose[2] += 0.1    
-    # print(pose["pickup_safe_height"], temp_pose)
-    # input("continue?")
-    # viperx_move(viperx, temp_pose, 0)    
-    # input("continue?")
     if "approach" in pose.keys():
         viperx_move(viperx, pose["approach"], 1)
 

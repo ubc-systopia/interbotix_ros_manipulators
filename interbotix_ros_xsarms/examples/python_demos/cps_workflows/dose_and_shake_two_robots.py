@@ -1,17 +1,15 @@
 import sys
-
-#username = 'viperx'
 username = 'cpsadmin'
-sys.path.append(r'/home/{}/niraapad/'.format(username))
+# sys.path.append('/home/cpsadmin/niraapad/')
 
 # Import the module
-import niraapad.backends
-from niraapad.lab_computer.niraapad_client import NiraapadClient
+# import niraapad.backends
+# from niraapad.lab_computer.niraapad_client import NiraapadClient
 
-host = 'localhost'
-port = '1337'
-abstract = '/home/{}/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'.format(username)
-NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=abstract, domain_configdir=None)
+# host = 'localhost'
+# port = '1337'
+# abstract = '/home/cpsadmin/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'
+# NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=None, domain_configdir=None)
 
 
 from ika.thermoshaker import Thermoshaker
@@ -22,6 +20,7 @@ sys.path.append(
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
 from workflow_utils import setup_thermoshaker, viperx_pick_up_object, viperx_place_object, ned2_pick_up_object, ned2_place_object, start_stirring_soln, start_tempering_soln, stop_stirring_soln, stop_tempering_soln, disconnect_devices, locations
+
 
 if __name__ == '__main__':
     # Initialize devices
@@ -45,8 +44,8 @@ if __name__ == '__main__':
     global viperx
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
-    viperx.arm.go_to_home_pose()
-    
+
+   
    
     ned2_ip = "169.254.200.200"
     global ned2
@@ -67,7 +66,7 @@ if __name__ == '__main__':
     dosing_device.set_door("state", "open")
     vial.decap_vial()
 
-
+    viperx.arm.go_to_home_pose()
     viperx_pick_up_object(viperx, viperx_grid, vial)
     viperx_place_object(viperx, viperx_dosing_device, vial)
    
