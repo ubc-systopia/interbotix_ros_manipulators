@@ -8,8 +8,8 @@ from dummy import SimulatedSmartDevice, Vial
 
 sys.path.append(
     '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules')
-from interbotix_xs_modules.arm import InterbotixManipulatorXS
-from pyniryo import tcp_client, enums_communication
+# from interbotix_xs_modules.arm import InterbotixManipulatorXS
+# from pyniryo import tcp_client, enums_communication
 
 ### LOCATION DATA
 # [x,y,z, roll, pitch, yaw]
