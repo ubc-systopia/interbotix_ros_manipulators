@@ -1,22 +1,11 @@
 import sys
 username = 'cpsadmin'
-# sys.path.append('/home/cpsadmin/niraapad/')
-
-# Import the module
-# import niraapad.backends
-# from niraapad.lab_computer.niraapad_client import NiraapadClient
-
-# host = 'localhost'
-# port = '1337'
-# abstract = '/home/cpsadmin/niraapad/niraapad/sarwat/abstract_config_file_testbed_two_coords.json'
-# NiraapadClient.connect_to_middlebox(host=host, port=port, abstract_configdir=None, domain_configdir=None)
-
 
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer
 from pyniryo import tcp_client
 sys.path.append(
-    '/home/{}/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_ws_toolbox/interbotix_ws_modules/src/interbotix_xs_modules'.format(username))
+    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src/interbotix_xs_modules')
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
 from workflow_utils import setup_thermoshaker, viperx_pick_up_object, viperx_place_object, ned2_pick_up_object, ned2_place_object, start_stirring_soln, start_tempering_soln, stop_stirring_soln, stop_tempering_soln, disconnect_devices, locations
@@ -45,7 +34,9 @@ if __name__ == '__main__':
     viperx = InterbotixManipulatorXS("vx300s", "arm", "gripper")
     viperx.arm.go_to_sleep_pose()
 
-   
+
+    viperx.arm.go_to_home_pose()
+    viperx.arm.go_to_sleep_pose()
    
     ned2_ip = "169.254.200.200"
     global ned2
@@ -53,7 +44,6 @@ if __name__ == '__main__':
     ned2.calibrate_auto()
     ned2.update_tool()
     ned2.move_pose([0.1342,0.0000, 0.1650,-0.003, 1.001, 0.000])
-  
 
     # Set vial locations
     ned2_grid = locations["grid"]["NW"]["ned2"]

@@ -93,6 +93,7 @@ if __name__ == '__main__':
     ned2.calibrate_auto()
     ned2.update_tool()
     ned2.move_pose([0.1342,0.0000, 0.1650,-0.003, 1.001, 0.000])
+    exit()
 
     run_ned2(ned2)
 
