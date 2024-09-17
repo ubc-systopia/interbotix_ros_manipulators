@@ -1,6 +1,6 @@
 import sys
 sys.path.append(
-    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src/interbotix_xs_modules')
+    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src')
 
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from pyniryo import tcp_client, enums_communication
@@ -74,7 +74,7 @@ def global_to_viperx_end_tip(global_coords):
 
 
     convert_global_to_viperx_cartesian = np.dot(np.linalg.inv(translation_matrix), [global_coords[0], global_coords[1], global_coords[2], 1])
-    convert_global_to_viperx_rotation = np.dot(np.linalg.inv(rotation_matrix), global_coords[3:6])
+    convert_global_to_viperx_rotation = np.dot(np.linalg.inv(rotation_matrix), global_coords)
 
     viperx_end_tip_coords = np.concatenate((convert_global_to_viperx_cartesian[0:3], convert_global_to_viperx_rotation))
     return np.ndarray.tolist(viperx_end_tip_coords)
@@ -109,15 +109,17 @@ def ned_run(pose=None):
 
 if __name__ == '__main__':
 
-    pose = [0.27087407,	0.10887015,	0.17143629]
-    viperx_end_tip_coords = viperx_run(pose)
-    input()
+    # pose = [0.23, 0.062, 0.13]
+    # new_pose = global_to_viperx_mid_tip(pose)
+    # print(new_pose)
+    # viperx_end_tip_coords = viperx_run(pose)
+    # input()
     viperx_run(None)
-    input()
+    # input()
     
-    global_coords = viperx_end_tip_to_global(viperx_end_tip_coords)
-    ned_run(global_coords)
-    input()
-    ned_run(None)
+    # global_coords = viperx_end_tip_to_global(viperx_end_tip_coords)
+    # ned_run(global_coords)
+    # input()
+    # ned_run(None)
 
     

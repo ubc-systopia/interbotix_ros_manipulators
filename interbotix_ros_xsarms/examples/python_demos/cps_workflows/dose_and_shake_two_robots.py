@@ -1,11 +1,23 @@
 import sys
 username = 'cpsadmin'
 
+sys.path.append('/home/cpsadmin/niraapad')
+
+#Import the module
+import niraapad.backends
+
+from niraapad.lab_computer.niraapad_client import NiraapadClient
+
+host = 'localhost'
+port = '1337'
+general_json_path = '/home/cpsadmin/niraapad/niraapad/rabit/json_files/json_testbed.json'
+NiraapadClient.connect_to_middlebox(host=host, port=port, general_file_path=general_json_path, custom_file_path=None, keysdir=None, debug=True)
+
+
 from ika.thermoshaker import Thermoshaker
 from ika.magnetic_stirrer import MockMagneticStirrer
 from pyniryo import tcp_client
-sys.path.append(
-    '/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src/interbotix_xs_modules')
+sys.path.append('/home/cpsadmin/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src/interbotix_xs_modules')
 from interbotix_xs_modules.arm import InterbotixManipulatorXS
 from dummy import SimulatedSmartDevice, Vial
 from workflow_utils import setup_thermoshaker, viperx_pick_up_object, viperx_place_object, ned2_pick_up_object, ned2_place_object, start_stirring_soln, start_tempering_soln, stop_stirring_soln, stop_tempering_soln, disconnect_devices, locations
